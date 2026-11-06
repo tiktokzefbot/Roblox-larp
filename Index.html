@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111114">
+<title>RobIox</title>
+<style>
+:root{--bg:#111114;--panel:#25262d;--muted:#bfc0c8;--white:#f7f7fa;--blue:#315dff;--line:#303139}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button{font:inherit;color:inherit;border:0;cursor:pointer}.app{max-width:900px;margin:auto;min-height:100dvh;padding-bottom:92px}
+.status{height:30px;padding:8px 22px 0;color:#eee;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.topbar{height:75px;padding:12px 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;background:rgba(17,17,20,.96);z-index:5}
+.iconbtn{background:none;font-size:28px;width:34px;height:42px;display:grid;place-items:center;position:relative}
+.dot{position:absolute;width:10px;height:10px;border-radius:50%;background:#3868ff;right:-1px;top:6px}
+.brand{font-weight:1000;letter-spacing:-2px;font-size:31px;line-height:1;color:#fff;flex:1;white-space:nowrap;text-shadow:1px 0 #fff,-1px 0 #fff}
+.top-actions{display:flex;gap:15px}.hex{font-size:25px}
+.profile{display:flex;align-items:center;gap:13px;padding:10px 22px 22px;font-size:23px;font-weight:750}
+.avatar{width:58px;height:58px;border-radius:50%;background:linear-gradient(145deg,#253b59,#111);display:grid;place-items:center;font-size:30px;border:1px solid #363944}
+.stories{display:flex;gap:18px;overflow-x:auto;padding:6px 22px 28px;scrollbar-width:none}.stories::-webkit-scrollbar{display:none}
+.story{min-width:155px;text-align:center}.story-pic{width:155px;height:155px;border-radius:50%;background:#292a32;display:grid;place-items:center;margin-bottom:13px;overflow:hidden;position:relative;font-size:64px}
+.story-pic.red{background:radial-gradient(circle at 50% 40%,#25232d,#08090e 65%);color:#f23c40;text-shadow:0 0 18px red}
+.story-pic.green{background:linear-gradient(145deg,#d0edc4,#78bd75);font-size:65px}
+.story-name{font-size:16px;font-weight:650}.story-sub{font-size:14px;color:#d4d4da;margin-top:5px}
+.online{position:absolute;right:5px;bottom:6px;background:#39c88a;width:29px;height:29px;border:4px solid #292a32;border-radius:50%}
+.section{padding:8px 22px 20px}.section-head{font-size:25px;font-weight:750;margin:0 0 22px}
+.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:23px 18px}
+.game{min-width:0;cursor:pointer}.thumb{width:100%;aspect-ratio:1.62;border-radius:15px;overflow:hidden;display:grid;place-items:center;position:relative;border:1px solid #34353d}
+.thumb .big{font-size:55px;filter:drop-shadow(2px 3px 1px #222)}.thumb .label{position:absolute;top:8px;left:9px;right:9px;font-weight:1000;font-size:clamp(15px,3vw,24px);text-align:center;text-shadow:1px 2px #222}
+.t1{background:linear-gradient(155deg,#f4f4f4 0 50%,#e7e8ed 50%);color:#f33}.t1:after{content:"";position:absolute;bottom:0;width:100%;height:38%;background:linear-gradient(20deg,#ed3535 0 45%,#eee 46%);opacity:.9}
+.t2{background:linear-gradient(135deg,#f9f2e4,#ffb7a8 50%,#50df72);color:#fff}.t2 .big{font-size:60px}
+.t3{background:linear-gradient(90deg,#1cbaff,#1465e8);color:#ffdc00}.t4{background:linear-gradient(135deg,#8ac4df,#77717d);color:#fff}
+.game-title{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:11px}.rating{color:#c8c8d0;font-size:16px;margin-top:4px}.rating span{font-size:18px}
+.continue{padding-top:13px}.continue-head{display:flex;align-items:center;justify-content:space-between;font-size:25px;font-weight:750;margin-bottom:19px}.continue-row{display:flex;gap:16px;overflow:auto;scrollbar-width:none}.continue-card{min-width:160px;width:160px}.continue-card .thumb{aspect-ratio:1.45;border-radius:13px}.continue-card .game-title{font-size:14px}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(17,17,20,.98);border-top:1px solid #202127;display:flex;justify-content:center;z-index:10;padding:9px 8px calc(9px + env(safe-area-inset-bottom))}
+.nav{width:min(900px,100%);display:grid;grid-template-columns:repeat(4,1fr)}.nav button{background:none;color:#c7c8cf;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:14px;padding:2px}.nav button.active{color:#fff}.nav-icon{font-size:27px;line-height:1.2}.nav button.active .nav-icon{filter:brightness(1.4)}
+.panel{display:none;padding:22px}.panel.active{display:block}.searchbox{background:#292a31;border-radius:14px;padding:14px 16px;color:#c8c8ce;width:100%;border:1px solid #393a42;font-size:16px;margin-bottom:20px}
+.notice{background:#24252c;border-radius:16px;padding:17px;margin:12px 0;color:#e5e5e9}.profile-card{display:flex;align-items:center;gap:15px;background:#25262d;padding:20px;border-radius:16px}.primary{background:#335dff;border-radius:12px;padding:12px 17px;font-weight:700;margin-top:12px}
+@media(min-width:700px){.section-head,.continue-head{font-size:28px}.thumb .label{font-size:24px}.profile{font-size:25px}}
+
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.68);z-index:30;opacity:0;pointer-events:none;transition:opacity .22s}
+.detail-overlay.open{opacity:1;pointer-events:auto}
+.detail-sheet{position:fixed;z-index:31;left:0;right:0;bottom:0;height:min(79dvh,820px);background:#191a20;border-radius:25px 25px 0 0;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;max-width:900px;margin:auto;box-shadow:0 -12px 45px #0008;overflow:hidden}
+.detail-sheet.open{transform:translateY(0)}
+.sheet-handle{height:23px;flex:none;display:grid;place-items:center}.sheet-handle:after{content:"";width:52px;height:5px;border-radius:9px;background:#41424b}
+.detail-scroll{overflow-y:auto;flex:1;padding:8px 22px 20px;overscroll-behavior:contain}
+.detail-heading{display:flex;gap:15px;align-items:center;margin:0 0 24px}
+.detail-icon{width:94px;height:94px;border-radius:14px;flex:none;display:grid;place-items:center;background:#30313a;font-size:43px}
+.detail-name{font-size:clamp(19px,4.5vw,28px);font-weight:750;line-height:1.22;margin-bottom:13px}
+.detail-dev,.detail-maturity{font-size:16px;color:#d0d0d7;margin-top:6px}
+.detail-preview{width:100%;aspect-ratio:1.55;border-radius:13px;overflow:hidden;position:relative;background:linear-gradient(#dedede 0 68%,#bfc0c2 68%);display:flex;align-items:flex-end;justify-content:space-evenly;padding:0 7% 10%;margin-bottom:28px}
+.detail-preview:before{content:"";position:absolute;inset:68% 0 0;background:repeating-linear-gradient(0deg,transparent 0 25px,#aaa 26px,#aaa 27px),repeating-linear-gradient(90deg,transparent 0 35px,#aaa 36px,#aaa 37px);opacity:.35}
+.stage-person{position:relative;z-index:1;width:22%;height:72%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.stage-person:nth-child(2){height:44%;width:18%}.stage-person:nth-child(3){height:17%;width:12%}
+.stage-head{width:45%;aspect-ratio:1;background:#fff;border-radius:5px 5px 2px 2px;border:2px solid #ddd}
+.stage-body{height:53%;width:68%;background:#956044;border:2px solid #815139;border-radius:3px}
+.stage-legs{height:43%;width:75%;display:flex;gap:3px}.stage-legs i{display:block;background:#fff;border:1px solid #ddd;flex:1}
+.stage-tag{position:absolute;top:-27px;white-space:nowrap;font-weight:1000;font-size:clamp(12px,3vw,23px);color:#14db38;text-shadow:1px 2px #111,-1px -1px #111}
+.stage-person:nth-child(2) .stage-tag{color:#ffe500}.stage-person:nth-child(3) .stage-tag{color:#e33}
+.preview-dots{position:absolute;z-index:2;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:9px}
+.preview-dots i{width:9px;height:9px;border-radius:50%;background:#aeb0b8}.preview-dots i:first-child{width:37px;border-radius:9px;background:#fff}
+.detail-actions{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin:0 0 28px;padding-bottom:2px}
+.detail-pill{flex:none;background:#30313a;border-radius:28px;padding:12px 17px;display:flex;align-items:center;gap:9px;font-size:16px;white-space:nowrap}
+.detail-pill button{background:transparent;padding:0;font-size:inherit}
+.detail-description h3{font-size:22px;margin:0 0 9px}.detail-description p{color:#c6c6ce;line-height:1.5;margin:0 0 14px}
+.detail-footer{flex:none;background:#191a20;border-top:1px solid #34353d;padding:12px 20px calc(12px + env(safe-area-inset-bottom));display:flex;gap:14px;align-items:center}
+.detail-footer button{height:58px;border-radius:13px;background:#30313a;font-size:24px;min-width:58px}
+.detail-footer .play-button{background:#335dff;flex:1;font-size:27px;font-weight:700}
+@media(min-width:700px){.detail-sheet{height:min(83dvh,850px)}.detail-scroll{padding-left:30px;padding-right:30px}.detail-preview{aspect-ratio:2.05}}
+
+
+.friends-screen{position:fixed;inset:0;z-index:40;background:#111114;color:#f5f5f7;display:none;flex-direction:column;overflow-y:auto;padding:calc(18px + env(safe-area-inset-top)) 20px 28px}
+.friends-screen.open{display:flex}
+.friends-top{display:flex;align-items:center;gap:16px;margin:3px 0 28px}
+.friends-back{background:none;color:#fff;font-size:34px;width:42px;height:50px;padding:0}
+.people-search{height:56px;flex:1;min-width:0;border:1px solid #393a43;border-radius:9px;background:#191a20;color:#fff;padding:0 15px;font-size:17px}
+.people-search::placeholder{color:#c6c6ce}
+.friends-tabs{display:grid;grid-template-columns:1fr 1fr;margin:0 -20px;border-bottom:1px solid #303139}
+.friends-tab{background:none;color:#aeb0b9;padding:17px 8px 14px;font-weight:650;font-size:16px;border-bottom:2px solid transparent}
+.friends-tab.active{color:#fff;border-bottom-color:#fff}
+.qr-shortcut{width:116px;text-align:center;background:none;align-self:flex-start;color:#d5d5dc;font-size:15px;margin-top:26px}
+.qr-circle{width:116px;height:116px;border-radius:50%;background:#25262e;display:grid;place-items:center;font-size:40px;margin-bottom:13px}
+.friends-empty{margin:75px auto 0;text-align:center;max-width:420px}
+.empty-person{width:165px;height:165px;margin:0 auto 38px;display:grid;place-items:center;transform:rotate(-13deg);border:2px solid #34353d;border-radius:6px;font-size:94px;color:#f3f3f5}
+.friends-empty h2{font-size:23px;line-height:1.25;margin:0 0 14px}
+.friends-empty p{font-size:18px;color:#c9c9d1;line-height:1.45;margin:0}
+
+.friend-results{padding:20px 0}
+.person-row{display:flex;align-items:center;gap:13px;background:#24252c;border-radius:15px;padding:13px;margin:10px 0}
+.person-avatar{width:54px;height:54px;flex:none;border-radius:50%;display:grid;place-items:center;background:#343746;font-size:27px}
+.person-meta{min-width:0;flex:1}.person-name{font-weight:750;font-size:16px}.person-handle{font-size:13px;color:#aeb0b9;margin-top:3px}.person-bio{font-size:12px;color:#c6c6ce;margin-top:5px;line-height:1.35}
+.person-action{background:#315dff;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:700;flex:none}.person-action.sent{background:#343640;color:#ccc}
+.profile-detail{position:fixed;inset:0;z-index:65;background:#111114;display:none;flex-direction:column;overflow-y:auto;padding:calc(18px + env(safe-area-inset-top)) 22px 30px}
+.profile-detail.open{display:flex}.profile-detail-top{display:flex;align-items:center;gap:15px}.profile-detail-back{background:none;font-size:32px}.profile-hero{text-align:center;margin:38px auto 22px;width:100%;max-width:480px}.profile-hero .person-avatar{width:112px;height:112px;font-size:55px;margin:0 auto 15px}.profile-hero h2{font-size:25px;margin:0 0 5px}.profile-hero .handle{color:#b7b8c2}.profile-info{background:#24252c;border-radius:15px;padding:18px;margin:9px auto;width:100%;max-width:480px}.profile-info small{color:#aeb0b9;display:block;margin-bottom:7px}.larp-friends{border-top:1px solid #393a43;margin-top:18px;padding-top:16px}.larp-friends h3{font-size:17px;margin:0 0 6px}.larp-friends .larp-sub{margin-bottom:12px}.larp-friend-list{display:grid;gap:8px}.larp-friend-item{display:flex;align-items:center;gap:10px;background:#292a32;border-radius:12px;padding:10px}.larp-friend-item .person-avatar{width:42px;height:42px;font-size:21px}.larp-friend-item .person-meta{flex:1}.larp-friend-item button{background:#315dff;border-radius:9px;padding:9px 10px;font-size:12px;font-weight:700}
+@media(max-height:700px){.friends-empty{margin-top:35px}.empty-person{width:125px;height:125px;font-size:70px;margin-bottom:25px}}
+
+
+.t5{background:linear-gradient(145deg,#b6e6ff,#48a5e9 55%,#7bdc8c);color:#fff}
+.t6{background:linear-gradient(145deg,#ffdf59,#f56c2d 55%,#a72a26);color:#fff}
+.t7{background:linear-gradient(120deg,#111827,#343b68 50%,#5b2d91);color:#fff}
+.t8{background:linear-gradient(145deg,#d6f5ff,#8ab8ff 55%,#d8c4ff);color:#27304c}
+.t9{background:linear-gradient(145deg,#16151f,#40325e 55%,#15131b);color:#fff}
+
+
+/* Roblox wordmark: the tilted square replaces the first “o” */
+.brand{display:flex;align-items:center;gap:0;font-family:Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:-1.8px;font-size:31px;line-height:1;color:#fff;flex:1;white-space:nowrap;text-shadow:none}
+.brand-logo-mark{width:23px;height:23px;display:inline-block;position:relative;flex:none;margin:0 2px 0 1px;background:#f5f5f7;transform:rotate(15deg);border-radius:1px}
+.brand-logo-mark:after{content:"";position:absolute;width:8px;height:8px;left:7.5px;top:7.5px;background:#111114;border-radius:0.5px}
+/* Larp menu V1 — local demo customization */
+.larp-overlay{position:fixed;inset:0;z-index:80;background:#000a;display:none;align-items:center;justify-content:center;padding:20px}
+.larp-overlay.open{display:flex}
+.larp-card{width:min(420px,100%);max-height:82dvh;overflow:auto;background:#191a21;border:1px solid #454653;border-radius:20px;padding:22px;box-shadow:0 18px 65px #000b;touch-action:pan-y}
+.larp-title{font-size:22px;font-weight:850;margin:0 0 5px}.larp-sub{font-size:13px;color:#bfc0c8;margin:0 0 20px}
+.larp-field{display:block;margin:15px 0;color:#eee;font-size:14px;font-weight:650}.larp-field input{display:block;width:100%;margin-top:8px;background:#292a32;border:1px solid #494b57;color:#fff;border-radius:11px;padding:13px;font:inherit;font-size:16px;outline:none}
+.larp-toggle{display:flex;align-items:center;justify-content:space-between;background:#292a32;border-radius:12px;padding:14px;margin:15px 0;font-size:14px}
+.larp-toggle input{width:22px;height:22px;accent-color:#315dff}.larp-note{font-size:12px;line-height:1.45;color:#aaa;margin-top:16px}.larp-holdhint{position:fixed;bottom:94px;left:50%;transform:translateX(-50%);z-index:12;background:#292a32d9;color:#ddd;padding:7px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap}
+.verified-badge{display:inline-grid;place-items:center;width:17px;height:17px;margin-left:5px;border-radius:50%;background:#2388ff;color:white;font-size:12px;font-weight:900;vertical-align:2px}
+
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="status"><span>3:50 ◉ ▰</span><span>▮▮▮　◉　▰</span></div>
+ <header class="topbar">
+  <button class="iconbtn" aria-label="Menu" onclick="toast('Menu opened')">☰<i class="dot"></i></button>
+  <div class="brand" aria-label="Roblox">R<span class="brand-logo-mark" aria-hidden="true"></span>blox</div>
+  <div class="top-actions">
+   <button class="iconbtn" aria-label="Search" onclick="showTab('search')">⌕</button>
+   <button class="iconbtn hex" aria-label="Robux" onclick="toast('Demo Robux: '+getDemoRobux())">⬡<span id="robuxCount" style="font-size:11px;display:block;line-height:10px">2</span></button>
+   <button class="iconbtn" aria-label="Notifications" onclick="showTab('notifications')">♧<i class="dot"></i></button>
+  </div>
+ </header>
+ <main>
+  <section id="home" class="panel active" style="padding:0">
+   <div class="profile"><div class="avatar">🤖</div><span><span data-demo-name>itsyourboymason</span><span class="verified-badge" data-verified hidden>✓</span></span></div>
+   <div class="stories">
+    <div class="story" role="button" tabindex="0" onclick="openFriends()" onkeydown="if(event.key==='Enter'||event.key===' ')openFriends()"><div class="story-pic">＋</div><div class="story-name">Add Friends</div></div>
+    <div class="story"><div class="story-pic red">👹<i class="online"></i></div><div class="story-name">gay☑️</div><div class="story-sub">[UPD] SCP MORPH</div></div>
+    <div class="story"><div class="story-pic green">🧟</div><div class="story-name">cringe▫</div></div>
+    <div class="story"><div class="story-pic">🎮</div><div class="story-name">gamesquad</div></div>
+   </div>
+   <section class="section">
+    <h2 class="section-head">Recommended For You</h2>
+    <div class="games">
+     <article class="game" onclick="openGame(0)"><div class="thumb t1"><span class="label">The Entire Obby</span><span class="big">🧗</span></div><div class="game-title">obby but you get smaller...</div><div class="rating"><span>👍</span> 34% Rating</div></article>
+     <article class="game" onclick="openGame(1)"><div class="thumb t2"><span class="label">HIDE IN DRAWINGS 🎨</span><span class="big">🖍️</span></div><div class="game-title">Hide In Drawings 🎨</div><div class="rating"><span>👍</span> 86% Rating</div></article>
+     <article class="game" onclick="openGame(2)"><div class="thumb t3"><span class="label">0.67%　　99.9%</span><span class="big">🍟</span></div><div class="game-title">Make The Logo!</div><div class="rating"><span>👍</span> 69% Rating</div></article>
+     <article class="game" onclick="openGame(3)"><div class="thumb t4"><span class="label">First thing you do when you wake up?</span><span class="big">🤖 🛏️</span></div><div class="game-title">AI Judge</div><div class="rating"><span>👍</span> 32% Rating</div></article>
+     <article class="game" onclick="openGame(4)"><div class="thumb t5"><span class="label">BUILD YOUR OWN!</span><span class="big">🧱</span></div><div class="game-title">Build an obby</div><div class="rating"><span>👍</span> 91% Rating</div></article>
+     <article class="game" onclick="openGame(5)"><div class="thumb t6"><span class="label">STEAL A BRAINROT</span><span class="big">🧠</span></div><div class="game-title">Steal a brainrot</div><div class="rating"><span>👍</span> 88% Rating</div></article>
+     <article class="game" onclick="openGame(6)"><div class="thumb t7"><span class="label">CHATGPT VS CLAUDE</span><span class="big">🤖 ⚔️ 🤖</span></div><div class="game-title">Chatgpt vs Claude</div><div class="rating"><span>👍</span> 95% Rating</div></article>
+     <article class="game" onclick="openGame(7)"><div class="thumb t8"><span class="label">WHAT'S YOUR IQ?</span><span class="big">🧩</span></div><div class="game-title">IQ test</div><div class="rating"><span>👍</span> 82% Rating</div></article>
+     <article class="game" onclick="openGame(8)"><div class="thumb t9"><span class="label">TEST EXPERIENCE</span><span class="big">🧪</span></div><div class="game-title">I wanna test the game</div><div class="rating"><span>👍</span> 76% Rating</div></article>
+    </div>
+    <div class="continue">
+     <div class="continue-head">Continue <span>›</span></div>
+     <div class="continue-row">
+      <article class="continue-card"><div class="thumb t2"><span class="big">🛒</span></div><div class="game-title">Larp Shopping</div></article>
+      <article class="continue-card"><div class="thumb" style="background:#07070b"><span class="big">🟪</span></div><div class="game-title">Build a House</div></article>
+      <article class="continue-card"><div class="thumb" style="background:#17121c"><span class="big">🐵</span></div><div class="game-title">Escape the...</div></article>
+      <article class="continue-card"><div class="thumb t3"><span class="big">😮</span></div><div class="game-title">Obby Challenge</div></article>
+     </div>
+    </div>
+   </section>
+  </section>
+  <section id="search" class="panel"><h2 class="section-head">Search</h2><input class="searchbox" id="searchInput" placeholder="Search games and people
